@@ -1,0 +1,7 @@
+importFrom(magrittr,"%>%")
+importFrom("utils", "install.packages", "installed.packages")
+importFrom("graphics", "legend", "lines", "points", "rect")
+importFrom("stats", "qnorm")
+import("ggplot2")
+
+export(survivalFast)
