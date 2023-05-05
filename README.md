@@ -27,7 +27,7 @@ library(SurvivalFast)
 ## basic example code
 ```
 
-Remission times (in weeks) for two groups of leukemia patients:
+Remission times （in weeks） for two groups of leukemia patients:
 
 ``` r
 summary(canser)
@@ -40,7 +40,7 @@ summary(canser)
 #>  Max.   :2.0   Max.   :35.00   Max.   :1.0000
 ```
 
-For example:
+For example（console的區域若太小，可能導致表格被截斷，而無法完整顯示）:
 
 ``` r
 survivalFast(canser$Week,            # 時間(必填)

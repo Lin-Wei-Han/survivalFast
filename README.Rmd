@@ -38,13 +38,13 @@ library(SurvivalFast)
 ## basic example code
 ```
 
-Remission times (in weeks) for two groups of leukemia patients:
+Remission times （in weeks） for two groups of leukemia patients:
 
 ```{r canser}
 summary(canser)
 ```
 
-For example:
+For example（console的區域若太小，可能導致表格被截斷，而無法完整顯示）:
 
 ```{r}
 survivalFast(canser$Week,            # 時間(必填)
