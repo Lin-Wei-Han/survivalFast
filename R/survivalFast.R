@@ -14,6 +14,11 @@
 #'
 #' @return The result of Life tables,KM curve and statistics.
 #' @importFrom magrittr %>%
+#' @importFrom dplyr filter summarise n
+#' @importFrom huxtable hux everywhere final set_bold set_position set_font set_bottom_border set_width set_all_padding
+#' @importFrom stats qnorm
+#' @importFrom graphics legend lines points rect
+#' @importFrom ggplot2 alpha
 #' @export
 #'
 #' @examples
@@ -33,19 +38,13 @@
 survivalFast <- function(survTime,censor,group=1,y = 0,conf.level=0.95,
                      conf.type = "plain",hazard.type = "likelihood",
                      plot = TRUE,plot.conf = TRUE,statistics = TRUE){
-  check.packages <- function(pkg) {
-    new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
-    if (length(new.pkg)) {
-      install.packages(new.pkg, dependencies = TRUE)
-    }
-    sapply(pkg, require, character.only = TRUE)
-  }
-  pkg <- c("dplyr", "huxtable")
-  check.packages(pkg)
+  Censord <- NULL
+  Group <- NULL
+  Week <- NULL
   # 取得發生事件人數
   get_dj <- function(time,dataseOrder){
     sapply(time,function(time){
-      counter <- dataseOrder %>% dplyr::filter(Censord == 1 & Week == time) %>% summarise(count = n())
+      counter <- dataseOrder %>% dplyr::filter(Censord == 1 & Week == time) %>% dplyr::summarise(count = dplyr::n())
       return(counter$count)
     })
   }
@@ -201,11 +200,11 @@ survivalFast <- function(survTime,censor,group=1,y = 0,conf.level=0.95,
     lowerCI.Name <- paste0("lower ",conf.level*100,"%"," CI")
     colnames(survTable) <- c("tj","risk","event","censor","surv","std.err",upperCI.Name,lowerCI.Name)
     table <- huxtable::hux(survTable) %>%
-      set_bold(row=1,col=everywhere)%>%
-      set_bottom_border(row=1,col=everywhere)%>%
-      set_bottom_border(final(1), everywhere)%>%
-      set_position("left")%>%
-      set_font(value = "Times New Roman")
+      huxtable::set_bold(row=1,col=huxtable::everywhere)%>%
+      huxtable::set_bottom_border(row=1,col=huxtable::everywhere)%>%
+      huxtable::set_bottom_border(huxtable::final(1), huxtable::everywhere)%>%
+      huxtable::set_position("left")%>%
+      huxtable::set_font(value = "Times New Roman")
     cat("\n\nGroup: ",i," | Life Table:\n\n")
     print(table)
 
@@ -242,11 +241,11 @@ survivalFast <- function(survTime,censor,group=1,y = 0,conf.level=0.95,
       }
 
       if(plot.conf){
-        lines(plot.time, plot.upperCI,type = 's', lty = 1, col = alpha(col,0.3))
-        lines(plot.time, plot.lowerCI,type = 's', lty = 1, col = alpha(col,0.3))
+        lines(plot.time, plot.upperCI,type = 's', lty = 1, col = ggplot2::alpha(col,0.3))
+        lines(plot.time, plot.lowerCI,type = 's', lty = 1, col = ggplot2::alpha(col,0.3))
         for (i in 1:(length(plot.upperCI)-1)) {
           rect(xleft=plot.time[i], xright=plot.time[i+1],
-               ybottom=plot.lowerCI[i], ytop=plot.upperCI[i], col=alpha(col,0.1), border=NA)
+               ybottom=plot.lowerCI[i], ytop=plot.upperCI[i], col= ggplot2::alpha(col,0.1), border=NA)
         }
       }
       points(x = censor.time,y = censor.st,pch = 18,lwd = 2,col = col)
@@ -255,13 +254,13 @@ survivalFast <- function(survTime,censor,group=1,y = 0,conf.level=0.95,
   legend("topright",legend = c(unique(data$Group)),bty = "n",lty = 1,lwd = 2,col = 1:length(unique(data$Group)))
   colnames(statAllTable) <- c("statistic",sapply(unique(data$Group),function(x){paste0("Group:",x)}))
   statAllTable <- huxtable::hux(statAllTable) %>%
-    set_all_padding(4) %>%
-    set_position("left")%>%
-    set_bold(row=1,col=everywhere)%>%
-    set_bottom_border(row=1, everywhere)%>%
-    set_bottom_border(row=4,everywhere)%>%
-    set_bottom_border(final(1), everywhere)%>%
-    set_width(0.8)
+    huxtable::set_all_padding(4) %>%
+    huxtable::set_position("left")%>%
+    huxtable::set_bold(row=1,col=huxtable::everywhere)%>%
+    huxtable::set_bottom_border(row=1, huxtable::everywhere)%>%
+    huxtable::set_bottom_border(row=4, huxtable::everywhere)%>%
+    huxtable::set_bottom_border(huxtable::final(1), huxtable::everywhere)%>%
+    huxtable::set_width(0.8)
   if(statistics){
     cat("\n\nStatistics Table:\n\n")
     cat("Estimator at an time :",y,"\n\n")

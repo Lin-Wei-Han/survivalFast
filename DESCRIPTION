@@ -9,8 +9,8 @@ Description: Contains the survival analysis routines,including life table,
 License: MIT + file LICENSE
 Imports:
     dplyr,
-    ggplot2,
     huxtable,
+    ggplot2,
     magrittr
 Encoding: UTF-8
 LazyData: true
